@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+if test "$BASH" = "" || "$BASH" -uc 'a=();true "${a[@]}"' 2>/dev/null; then
+    # Bash 4.4, Zsh
+    set -euo pipefail
+else
+    # Bash 4.3 and older chokes on empty arrays with set -u.
+    set -eo pipefail
+fi
+shopt -s nullglob globstar
+
+function FST_version_check {
+  if [[ "-v" == "$1" || "--version" == "$1" ]]; then
+    echo "$FST_VERSION"
+    exit 0;
+  fi
+}
+
+function FST_find_self {
+  local SOURCE="${BASH_SOURCE[0]}"
+  while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+  done
+  echo "$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+}
+
+function FST_command_check {
+
+  local command="${FST_COMMANDPATH}/$1"
+
+  if [ ! -f "${command}"  ]; then
+    echo "command not found - Frame :: 1";
+    exit 1;
+  fi
+
+  FST_COMMAND="${command}"
+
+  shift
+
+}
+
+function FST_cleanup {
+
+  if [ "$( type -t FST_CEANUP_SELF )" == "function" ]; then
+    echo ""
+
+    echo "Doing Cleanup"
+
+    FST_CLEANUP_SELF;
+
+  fi
+
+
+}
+
+
+#
+# Script Entry Point
+#
+#
+
+export FST_VERSION="1.0.0";
+export FST_BASEBATH="$(FST_find_self)"
+export FST_UTILPATH="${FST_BASEBATH}/utils"
+export FST_COMMANDPATH="${FST_BASEBATH}/commands"
+
+FST_version_check "$@";
+
+FST_command_check "$@";
+
+if [ -z "$FST_COMMAND" ]; then
+  echo "command does not exists..";
+  exit 1;
+fi
+
+THE_COMMAND="$1"
+
+shift
+
+echo ""
+
+echo "Args ----"
+
+## Load utility files and common functions
+
+for file in $( ls -1 "${FST_BASEBATH}/utils" ); do
+  source "${FST_BASEBATH}/utils/${file}"
+done;
+
+## Execute the command
+
+source "${FST_COMMAND}";
+
+if [ ! "$( type -t FST_RUN_SELF )" == "function" ]; then
+  echo "Error: ${THE_COMMAND} is not structured correctly.."
+  exit 1
+fi
+
+trap FST_cleanup EXIT;
+
+
+echo "Running Command.."
+FST_RUN_SELF "$@"

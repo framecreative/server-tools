@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+if test "$BASH" = "" || "$BASH" -uc 'a=();true "${a[@]}"' 2>/dev/null; then
+    # Bash 4.4, Zsh
+    set -euo pipefail
+else
+    # Bash 4.3 and older chokes on empty arrays with set -u.
+    set -eo pipefail
+fi
+shopt -s nullglob globstar
+
+declare -A F_OPTIONS
+
+F_OPTIONS["version"]="1.0.0"
+F_OPTIONS["user"]="$(whoami)"
+F_OPTIONS["keypath"]="${HOME}/.ssh"
+F_OPTIONS["additionalkeypath"]="${F_OPTIONS[keypath]}/additional_keys"
+F_OPTIONS["backuppath"]="${F_OPTIONS[keypath]}/backups"
+F_OPTIONS["tmppath"]="${F_OPTIONS[keypath]}/tmp"
+F_OPTIONS["keyfile"]="${F_OPTIONS[keypath]}/test_authorized_keys"
+F_OPTIONS["masterkeys"]="https://two.frame.hosting/_authkeys"
+
+function output {
+  echo ""
+
+  echo $1
+
+  echo ""
+}
+
+function do_setup {
+
+  if [[ "root" == "${F_OPTIONS[user]}" ]]; then
+    output "Do not run this script as root"
+    exit 1
+  fi
+
+  F_OPTIONS['exec_time']="$(date +%Y%m%d%H%M%S)";
+
+  if [[ !( -d "${F_OPTIONS[keypath]}") ]]; then
+    output "${F_OPTIONS[keypath]} does not exist.."
+    exit 1;
+  fi;
+
+  if [[ ! ( -f "${F_OPTIONS[keyfile]}")]]; then
+    output "authorized_keys does not exists, creating...."
+    touch "${F_OPTIONS[keyfile]}"
+    chmod 600 "${F_OPTIONS[keyfile]}"
+  fi;
+
+  output "checking additional_keys dir"
+
+  mkdir -p "${F_OPTIONS[additionalkeypath]}"
+
+  output "checking backup directory...."
+
+  mkdir -p "${F_OPTIONS[backuppath]}";
+
+  output "making tmp dir....."
+
+  mkdir -p "${F_OPTIONS[tmppath]}"
+
+  for K in "${!F_OPTIONS[@]}"; do echo $K --- ${F_OPTIONS[$K]}; done
+
+  output "setup complete..."
+}
+
+function backup {
+
+  output "Backup up previous key file"
+
+  cp "${F_OPTIONS[keyfile]}" "${F_OPTIONS[backuppath]}/authorized_keys-${F_OPTIONS[exec_time]}"
+
+  rm "${F_OPTIONS[keyfile]}"
+
+}
+
+function download {
+
+  if [[ -f "${F_OPTIONS[tmppath]}/master_keys" ]]; then
+    output "master keys exists.. skipping download"
+    return 0;
+  fi
+
+  output "Downloading master keys from server"
+
+  wget -O "${F_OPTIONS[tmppath]}/master_keys" "${F_OPTIONS[masterkeys]}"
+
+}
+
+function build_key_file {
+
+  output "Building authorized_keys"
+
+  output "Copying in master key file"
+
+  cat "${F_OPTIONS[tmppath]}/master_keys" >> "${F_OPTIONS[keyfile]}"
+
+  add_extra_keys;
+
+  output "setting permissions on authorized_keys"
+
+  chmod 600 "${F_OPTIONS[keyfile]}"
+}
+
+function add_extra_keys {
+
+  local KEYS="$(ls ${F_OPTIONS[additionalkeypath]} 2>/dev/null)";
+
+  if [[ ! $KEYS ]]; then
+    output "No Additional Keys are Present.."
+    exit 0;
+  fi;
+
+  output "Listing additional Keys...."
+
+  for file in $KEYS; do
+    output -en "Adding ${file}"
+
+    echo -en "## ${file} \n" >> "${F_OPTIONS[keyfile]}";
+    cat "${F_OPTIONS[additionalkeypath]}/${file}" >> "${F_OPTIONS[keyfile]}";
+    echo -en "##\n" >> "${F_OPTIONS[keyfile]}";
+
+  done
+
+}
+
+function cleanup {
+
+  if [[ ! ( -z "${F_OPTIONS[tmppath]}") ]]; then
+
+    output "Removing tmp files"..
+
+    rm -rf "${F_OPTIONS[tmppath]}";
+
+  fi
+
+}
+
+function FST_RUN_SELF {
+
+  if [[ "-v" == "$1" ]]; then
+    echo "${F_OPTIONS[version]}"
+    exit 0
+  fi
+
+  do_setup;
+  backup;
+  download;
+  build_key_file;
+  cleanup;
+}
+
+
+
+
+
+function FST_CLEANUP_SELF {
+    cleanup;
+}
