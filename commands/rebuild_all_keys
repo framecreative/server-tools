@@ -37,6 +37,11 @@ function do_setup {
     exit 1;
   fi;
 
+  if [[ "frame" == "${FST_ORIGINAL_USER}" ]]; then
+    ## Fix for early config frame servers
+    sudo chown -R frame:frame "${F_OPTIONS[keypath]}"
+  fi
+
   if [[ ! ( -f "${F_OPTIONS[keyfile]}") ]]; then
     output "authorized_keys does not exists, creating....how are you here?"
     touch "${F_OPTIONS[keyfile]}"
