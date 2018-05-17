@@ -1,0 +1,51 @@
+# Parse the global args out
+function FST_parse_global_opts {
+  local POSITIONAL=()
+  while [[ $# -gt 0 ]]
+  do
+  key="$1"
+
+  case $key in
+      -v|--version)
+      FST_version
+      shift;
+      exit 0;
+      ;;
+      -q|--quiet)
+      FST_OUTPUT_LEVEL="0"
+      shift # past argument
+      ;;
+      -vvv|--verbose)
+      FST_DEBUG="true"
+      shift # past argument
+      ;;
+      --no-log)
+      FST_LOG_LEVEL="0"
+      shift # past argument
+      ;;
+      --debug)
+      if [[ FST_OUTPUT_LEVEL == "0" ]]; then
+        echo "--quiet and --debug are not compatble"
+        exit 1
+      fi
+      FST_DEBUG="true"
+      shift # past argument
+      ;;
+      *)    # unknown option
+      POSITIONAL+=("$1") # save it in an array for later
+      shift # past argument
+      ;;
+  esac
+  done
+
+  if [[ "${FST_DEBUG}" == "true" ]]; then
+    echo "FST OUTPUT LEVEL = ${FST_OUTPUT_LEVEL}"
+    echo "FST LOG LEVEL = ${FST_LOG_LEVEL}"
+    echo "FST DEBUG = ${FST_DEBUG}"
+
+    echo "Additonal args --------------+"
+    echo "$@"
+  fi
+
+  FST_PARSED_ARGS="${POSITIONAL[@]}" # restore positional parameters
+}

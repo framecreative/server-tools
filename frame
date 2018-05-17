@@ -8,13 +8,6 @@ else
 fi
 shopt -s nullglob globstar
 
-function FST_version_check {
-  if [[ "-v" == "$1" || "--version" == "$1" ]]; then
-    echo "$FST_VERSION"
-    exit 0;
-  fi
-}
-
 function FST_find_self {
   local SOURCE="${BASH_SOURCE[0]}"
   while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
@@ -23,35 +16,6 @@ function FST_find_self {
   [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
   done
   echo "$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-}
-
-function FST_command_check {
-
-  local command="${FST_COMMANDPATH}/$1"
-
-  if [ ! -f "${command}"  ]; then
-    echo "command not found - Frame :: 1";
-    exit 1;
-  fi
-
-  FST_COMMAND="${command}"
-
-  shift
-
-}
-
-function FST_cleanup {
-
-  if [ "$( type -t FST_CEANUP_SELF )" == "function" ]; then
-    echo ""
-
-    echo "Doing Cleanup"
-
-    FST_CLEANUP_SELF;
-
-  fi
-
-
 }
 
 
@@ -65,22 +29,11 @@ export FST_BASEBATH="$(FST_find_self)"
 export FST_UTILPATH="${FST_BASEBATH}/utils"
 export FST_COMMANDPATH="${FST_BASEBATH}/commands"
 
-FST_version_check "$@";
-
-FST_command_check "$@";
-
-if [ -z "$FST_COMMAND" ]; then
-  echo "command does not exists..";
-  exit 1;
-fi
-
-THE_COMMAND="$1"
-
-shift
-
-echo ""
-
-echo "Args ----"
+FST_OUTPUT_LEVEL=1
+FST_LOG_LEVEL=1
+FST_DEBUG="false"
+FST_ORIGINAL_USER="$(whoami)"
+FST_CURRENT_COMMAND=""
 
 ## Load utility files and common functions
 
@@ -88,17 +41,27 @@ for file in $( ls -1 "${FST_BASEBATH}/utils" ); do
   source "${FST_BASEBATH}/utils/${file}"
 done;
 
-## Execute the command
+## parse options and set global flags, removing them from the args
+FST_parse_global_opts "$@"
+set -- "${FST_PARSED_ARGS}"
 
-source "${FST_COMMAND}";
+## Check the command exists
 
-if [ ! "$( type -t FST_RUN_SELF )" == "function" ]; then
-  echo "Error: ${THE_COMMAND} is not structured correctly.."
-  exit 1
-fi
+FST_command_check "$1";
+
+## If the above command didn't error out, then we're good to go
+## remove the first positional as it's the command name
+
+FST_CURRENT_COMMAND="$1"
+
+shift
+
+source "${FST_COMMAND}"
+
+## Trap any command with our cleanup function - can be more developed later
 
 trap FST_cleanup EXIT;
 
-
+## Time to run the command
 echo "Running Command.."
 FST_RUN_SELF "$@"

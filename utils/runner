@@ -1,0 +1,20 @@
+function FST_run_as {
+
+  if [[ "" == "$1" || "" == $2 ]]; then
+    output "not enough args suplied - needs \$1: user \$2:command"
+    exit 1
+  fi
+
+  local the_user="$1"
+  local the_command="$2"
+sudo -u "${the_user}" bash << EOF
+
+if [[ \$(whoami) != "${the_user}" ]]; then
+  echo "could not switch to user"
+  exit 1;
+fi
+
+$the_command
+EOF
+
+}

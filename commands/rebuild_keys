@@ -10,7 +10,6 @@ shopt -s nullglob globstar
 
 declare -A F_OPTIONS
 
-F_OPTIONS["version"]="1.0.0"
 F_OPTIONS["user"]="$(whoami)"
 F_OPTIONS["keypath"]="${HOME}/.ssh"
 F_OPTIONS["additionalkeypath"]="${F_OPTIONS[keypath]}/additional_keys"
@@ -19,13 +18,6 @@ F_OPTIONS["tmppath"]="${F_OPTIONS[keypath]}/tmp"
 F_OPTIONS["keyfile"]="${F_OPTIONS[keypath]}/test_authorized_keys"
 F_OPTIONS["masterkeys"]="https://two.frame.hosting/_authkeys"
 
-function output {
-  echo ""
-
-  echo $1
-
-  echo ""
-}
 
 function do_setup {
 
@@ -138,20 +130,11 @@ function cleanup {
 
 function FST_RUN_SELF {
 
-  if [[ "-v" == "$1" ]]; then
-    echo "${F_OPTIONS[version]}"
-    exit 0
-  fi
-
   do_setup;
   backup;
   download;
   build_key_file;
-  cleanup;
 }
-
-
-
 
 
 function FST_CLEANUP_SELF {

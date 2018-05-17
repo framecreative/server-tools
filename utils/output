@@ -1,0 +1,7 @@
+function output {
+  echo ""
+
+  echo $1
+
+  echo ""
+}

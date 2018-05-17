@@ -1,0 +1,14 @@
+function FST_setup_logging {
+
+  #Special check for serverpilot app users
+
+  mkdir -p "${HOME}/log"
+  mkdir -p "${HOME}/log/frame-server-tools"
+
+
+
+}
+
+function FST_timestring {
+  echo "$(date +%Y%m%d%H%M%S)";
+}

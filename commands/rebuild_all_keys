@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+if test "$BASH" = "" || "$BASH" -uc 'a=();true "${a[@]}"' 2>/dev/null; then
+    # Bash 4.4, Zsh
+    set -euo pipefail
+else
+    # Bash 4.3 and older chokes on empty arrays with set -u.
+    set -eo pipefail
+fi
+shopt -s nullglob globstar
+
+declare -A F_OPTIONS
+
+F_OPTIONS["user"]="$(whoami)"
+F_OPTIONS["keypath"]="${HOME}/.ssh"
+F_OPTIONS["additionalkeypath"]="${F_OPTIONS[keypath]}/additional_keys"
+F_OPTIONS["backuppath"]="${F_OPTIONS[keypath]}/backups"
+F_OPTIONS["tmppath"]="${F_OPTIONS[keypath]}/tmp"
+F_OPTIONS["keyfile"]="${F_OPTIONS[keypath]}/test_authorized_keys"
+F_OPTIONS["skelpath"]="/etc/skel"
+F_OPTIONS["masterkeys"]="https://two.frame.hosting/_authkeys"
+
+
+function do_setup {
+
+  if [[ "root" == "${FST_ORIGINAL_USER}" ]]; then
+    output "Do not run this script as root"
+    exit 1
+  fi
+
+  if [[ "frame" != "${FST_ORIGINAL_USER}" && "dev" != "${FST_ORIGINAL_USER}" ]]; then
+      output "This script must be run as 'frame' user with sudo priviledges"
+      exit 1
+  fi
+
+  if [[ !( -d "${F_OPTIONS[keypath]}") ]]; then
+    output "${F_OPTIONS[keypath]} does not exist.."
+    exit 1;
+  fi;
+
+  if [[ ! ( -f "${F_OPTIONS[keyfile]}")]]; then
+    output "authorized_keys does not exists, creating....how are you here?"
+    exit 1
+  fi;
+
+  output "making tmp dir....."
+
+  mkdir -p "${F_OPTIONS[tmppath]}"
+
+  for K in "${!F_OPTIONS[@]}"; do echo $K --- ${F_OPTIONS[$K]}; done
+
+  output "setup complete..."
+}
+
+
+function cleanup {
+
+  if [[ ! ( -z "${F_OPTIONS[tmppath]}") ]]; then
+
+    output "Removing tmp files"..
+
+    rm -rf "${F_OPTIONS[tmppath]}";
+
+  fi
+
+}
+
+function FST_RUN_SELF {
+
+  do_setup;
+
+  FST_run_as "root" "frame rebuild_skel_keys"
+
+  output "now back as $(whoami)"
+  output "finishing up"
+
+
+}
+
+
+function FST_CLEANUP_SELF {
+    cleanup;
+}
