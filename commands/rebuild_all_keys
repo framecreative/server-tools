@@ -46,6 +46,9 @@ function do_setup {
   fi
 
   if [[ "dev" == "${FST_ORIGINAL_USER}" ]]; then
+
+    output "setting up temp path and dir"
+
     FST_USER_DIR="/Users/dev/tmp/serverpilot-mock"
 
     mkdir -p "${FST_USER_DIR}"
@@ -66,14 +69,14 @@ function do_setup {
 
 function rebuild_users_keys {
 
-    local users="$( ls -1 /srv/users)"
+    local users=$( ls $FST_USER_DIR)
 
     if [ -z "$users" ]; then
         output "No users found matching that pattern"
         return 0
     fi
 
-    for U in "${users}"; do
+    for U in ${users[@]}; do
 
          output::block
 
@@ -117,7 +120,7 @@ function FST_RUN_SELF {
 
   do_setup;
 
-  rebuild_skel_keys;
+  #rebuild_skel_keys;
 
   rebuild_users_keys;
 
