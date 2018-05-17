@@ -39,7 +39,7 @@ function do_setup {
 
   if [[ ! ( -f "${F_OPTIONS[keyfile]}") ]]; then
     output "authorized_keys does not exists, creating....how are you here?"
-    exit 1
+    touch "${F_OPTIONS[keyfile]}"
   fi;
 
   output "making tmp dir....."
@@ -61,7 +61,7 @@ function rebuild_users_keys {
 
     for U in "${users}"; do
 
-         ouput::block
+         output::block
 
          output "Beginning key rebuild for user: ${U}"
 
