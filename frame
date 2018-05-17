@@ -24,7 +24,7 @@ function FST_find_self {
 #
 #
 
-export FST_VERSION="1.0.0";
+export FST_VERSION="1.0.1";
 export FST_BASEBATH="$(FST_find_self)"
 export FST_UTILPATH="${FST_BASEBATH}/utils"
 export FST_COMMANDPATH="${FST_BASEBATH}/commands"
