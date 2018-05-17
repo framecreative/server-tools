@@ -70,7 +70,7 @@ function rebuild_users_keys {
 
          output "Beginning key rebuild for user: ${U}"
 
-         FC_run_as "${U}" "frame test_command"
+         FST_run_as "${U}" "test_command"
 
          output::block
 
