@@ -19,6 +19,9 @@ F_OPTIONS["keyfile"]="${F_OPTIONS[keypath]}/test_authorized_keys"
 F_OPTIONS["skelpath"]="/etc/skel"
 F_OPTIONS["masterkeys"]="https://two.frame.hosting/_authkeys"
 
+if [ -z "${FST_USER_DIR+x}"];
+  then FST_USER_DIR="/srv/users";
+fi
 
 function do_setup {
 
@@ -42,6 +45,12 @@ function do_setup {
     sudo chown -R frame:frame "${F_OPTIONS[keypath]}"
   fi
 
+  if [[ "dev" == "${FST_ORIGINAL_USER}" ]]; then
+    FST_USER_DIR="/Users/dev/tmp/serverpilot-mock"
+
+    mkdir -p "${FST_USER_DIR}"
+  fi
+
   if [[ ! ( -f "${F_OPTIONS[keyfile]}") ]]; then
     output "authorized_keys does not exists, creating....how are you here?"
     touch "${F_OPTIONS[keyfile]}"
@@ -57,7 +66,7 @@ function do_setup {
 
 function rebuild_users_keys {
 
-    local users="$( ls /srv/users)"
+    local users="$( ls -1 /srv/users)"
 
     if [ -z "$users" ]; then
         output "No users found matching that pattern"
