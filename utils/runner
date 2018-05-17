@@ -6,15 +6,19 @@ function FST_run_as {
   fi
 
   local the_user="$1"
-  local the_command="$2"
-sudo -u "${the_user}" bash << EOF
 
-if [[ \$(whoami) != "${the_user}" ]]; then
+  for k in "${@}"; do echo "$k"; done;
+
+sudo -u "${the_user}" bash -s "$@" <<-'EOF'
+
+if [[ $(whoami) != "$1" ]]; then
   echo "could not switch to user"
   exit 1;
 fi
 
-$the_command
+shift
+
+frame $@
 EOF
 
 }

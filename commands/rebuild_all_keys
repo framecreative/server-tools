@@ -37,7 +37,7 @@ function do_setup {
     exit 1;
   fi;
 
-  if [[ ! ( -f "${F_OPTIONS[keyfile]}")]]; then
+  if [[ ! ( -f "${F_OPTIONS[keyfile]}") ]]; then
     output "authorized_keys does not exists, creating....how are you here?"
     exit 1
   fi;
@@ -46,12 +46,47 @@ function do_setup {
 
   mkdir -p "${F_OPTIONS[tmppath]}"
 
-  for K in "${!F_OPTIONS[@]}"; do echo $K --- ${F_OPTIONS[$K]}; done
 
   output "setup complete..."
 }
 
+function rebuild_users_keys {
 
+    local users="$( ls /srv/users)"
+
+    if [ -z "$users" ]; then
+        output "No users found matching that pattern"
+        return 0
+    fi
+
+    for U in "${users}"; do
+
+         ouput::block
+
+         output "Beginning key rebuild for user: ${U}"
+
+         FC_run_as "${U}" "frame test_command"
+
+         output::block
+
+    done
+
+}
+
+function rebuild_skel_keys {
+
+      output::block
+
+      output "Beginning skel key rebuild"
+
+      if [[ "${FST_DRY}" == "true" ]]; then
+        FST_run_as "root" "test_command"
+      else
+        FST_run_as "root" "rebuild_skel_keys"
+      fi
+      output::block
+
+}
 function cleanup {
 
   if [[ ! ( -z "${F_OPTIONS[tmppath]}") ]]; then
@@ -68,10 +103,9 @@ function FST_RUN_SELF {
 
   do_setup;
 
-  FST_run_as "root" "frame rebuild_skel_keys"
+  rebuild_skel_keys;
 
-  output "now back as $(whoami)"
-  output "finishing up"
+  rebuild_users_keys;
 
 
 }

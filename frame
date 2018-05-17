@@ -34,6 +34,7 @@ FST_LOG_LEVEL=1
 FST_DEBUG="false"
 FST_ORIGINAL_USER="$(whoami)"
 FST_CURRENT_COMMAND=""
+FST_DRY="true"
 
 ## Load utility files and common functions
 
@@ -42,8 +43,11 @@ for file in $( ls -1 "${FST_BASEBATH}/utils" ); do
 done;
 
 ## parse options and set global flags, removing them from the args
+## IMPORTANT - Don't quote the variable here...
 FST_parse_global_opts "$@"
-set -- "${FST_PARSED_ARGS}"
+set -- $FST_PARSED_ARGS
+
+if [[ "${FST_DEBUG}" == "true" ]]; then echo "count $#"; echo "$@"; fi;
 
 ## Check the command exists
 
@@ -63,5 +67,4 @@ source "${FST_COMMAND}"
 trap FST_cleanup EXIT;
 
 ## Time to run the command
-echo "Running Command.."
 FST_RUN_SELF "$@"

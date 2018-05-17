@@ -8,7 +8,7 @@ function FST_command_check {
   local command="${FST_COMMANDPATH}/$1"
 
   if [ ! -f "${command}"  ]; then
-    echo "command not found - Frame :: $1";
+    output "command not found - Frame :: $1";
     exit 1;
   fi
 
@@ -17,7 +17,7 @@ function FST_command_check {
   source "${FST_COMMAND}";
 
   if [ ! "$( type -t FST_RUN_SELF )" == "function" ]; then
-    echo "Error: ${1} is not structured correctly.."
+    output "Error: ${1} is not structured correctly.."
     exit 1
   fi
 
@@ -26,9 +26,8 @@ function FST_command_check {
 function FST_cleanup {
 
   if [ "$( type -t FST_CEANUP_SELF )" == "function" ]; then
-    echo ""
 
-    echo "Doing Cleanup"
+    output "Running cleanup"
 
     FST_CLEANUP_SELF;
 

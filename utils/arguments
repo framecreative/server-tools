@@ -43,8 +43,11 @@ function FST_parse_global_opts {
     echo "FST LOG LEVEL = ${FST_LOG_LEVEL}"
     echo "FST DEBUG = ${FST_DEBUG}"
 
+    set -- "${POSITIONAL[@]}"
+
     echo "Additonal args --------------+"
-    echo "$@"
+    echo "count $#"
+    for opt in "$@"; do echo $opt; done;
   fi
 
   FST_PARSED_ARGS="${POSITIONAL[@]}" # restore positional parameters
