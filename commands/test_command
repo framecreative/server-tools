@@ -10,6 +10,6 @@ shopt -s nullglob globstar
 
 function FST_RUN_SELF {
 
-    output "TEST COMMAND RUNNING :)" "$(whoami)" "$HOME" "$USER" "$@"
+    output "TEST COMMAND RUNNING :)" "$(whoami)" "$HOME" "$@"
 
 }

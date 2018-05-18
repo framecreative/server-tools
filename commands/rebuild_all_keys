@@ -11,7 +11,7 @@ shopt -s nullglob globstar
 declare -A F_OPTIONS
 
 F_OPTIONS["user"]="$(whoami)"
-F_OPTIONS["keypath"]="${USER}/.ssh"
+F_OPTIONS["keypath"]="${HOME}/.ssh"
 F_OPTIONS["additionalkeypath"]="${F_OPTIONS[keypath]}/additional_keys"
 F_OPTIONS["backuppath"]="${F_OPTIONS[keypath]}/backups"
 F_OPTIONS["tmppath"]="${F_OPTIONS[keypath]}/tmp"
@@ -19,7 +19,7 @@ F_OPTIONS["keyfile"]="${F_OPTIONS[keypath]}/test_authorized_keys"
 F_OPTIONS["skelpath"]="/etc/skel"
 F_OPTIONS["masterkeys"]="https://two.frame.hosting/_authkeys"
 
-if [ -z "${FST_USER_DIR+x}"];
+if [ -z "${FST_USER_DIR+x}" ];
   then FST_USER_DIR="/srv/users";
 fi
 
