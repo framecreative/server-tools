@@ -143,6 +143,7 @@ function FST_RUN_SELF {
     backup;
     download;
     build_key_file;
+    cleanup;
   else
     ## Some settings for dry-run ie: test command
 
@@ -155,7 +156,7 @@ function FST_RUN_SELF {
     backup;
     download;
     build_key_file;
-
+    cleanup;
   fi
 }
 
