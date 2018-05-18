@@ -151,6 +151,11 @@ function FST_RUN_SELF {
 
     do_setup
     dump_args
+
+    backup;
+    download;
+    build_key_file;
+
   fi
 }
 
