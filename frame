@@ -25,9 +25,9 @@ function FST_find_self {
 #
 
 export FST_VERSION="1.1.0";
-export FST_BASEBATH="$(FST_find_self)"
-export FST_UTILPATH="${FST_BASEBATH}/utils"
-export FST_COMMANDPATH="${FST_BASEBATH}/commands"
+export FST_BASEPATH="$(FST_find_self)"
+export FST_UTILPATH="${FST_BASEPATH}/utils"
+export FST_COMMANDPATH="${FST_BASEPATH}/commands"
 
 FST_OUTPUT_LEVEL=1
 FST_LOG_LEVEL=1
@@ -46,8 +46,8 @@ fi
 
 ## Load utility files and common functions
 
-for file in $( ls -1 "${FST_BASEBATH}/utils" ); do
-  source "${FST_BASEBATH}/utils/${file}"
+for file in $( ls -1 "${FST_BASEPATH}/utils" ); do
+  source "${FST_BASEPATH}/utils/${file}"
 done;
 
 ## parse options and set global flags, removing them from the args

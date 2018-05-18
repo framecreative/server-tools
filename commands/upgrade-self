@@ -10,7 +10,8 @@ shopt -s nullglob globstar
 
 
 function FST_RUN_SELF {
-   cd "${FST_BASEPATH}" && git pull;
+   cd "${FST_BASEPATH}"; 
+   git pull;
 }
 
 function FST_cleanup {
