@@ -10,7 +10,7 @@ shopt -s nullglob globstar
 
 
 function FST_RUN_SELF {
-   echo "upgrading self"
+   cd "${FST_BASEPATH}" && git pull public master;
 }
 
 function FST_cleanup {
