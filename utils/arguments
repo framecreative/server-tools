@@ -23,6 +23,10 @@ function FST_parse_global_opts {
       FST_LOG_LEVEL="0"
       shift # past argument
       ;;
+      --run)
+      FST_DRY="false"
+      shift # past argument
+      ;;
       --debug)
       if [[ FST_OUTPUT_LEVEL == "0" ]]; then
         echo "--quiet and --debug are not compatble"
@@ -42,6 +46,7 @@ function FST_parse_global_opts {
     echo "FST OUTPUT LEVEL = ${FST_OUTPUT_LEVEL}"
     echo "FST LOG LEVEL = ${FST_LOG_LEVEL}"
     echo "FST DEBUG = ${FST_DEBUG}"
+    echo "FST DRY = ${FST_DRY}"
 
     set -- "${POSITIONAL[@]}"
 

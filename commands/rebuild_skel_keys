@@ -58,13 +58,13 @@ function setup_skel_dry {
   mkdir -p "${key_folder}"
   mkdir -p "${key_folder}/additional_keys"
 
-  output "Downloading new master key file"
+  output::mock "Downloading new master key file"
 
-  output " MOCK: curl" "${F_OPTIONS[masterkeys]}" "${key_file}"
+  output::mock " MOCK: curl" "${F_OPTIONS[masterkeys]}" "${key_file}"
 
   output "Setting skel key permissions"
-  output "chmod" "600" "${key_file}"
-  output "700" "${key_folder}"
+  output::mock "chmod" "600" "${key_file}"
+  output::mock "700" "${key_folder}"
 
   output "exiting root"
 

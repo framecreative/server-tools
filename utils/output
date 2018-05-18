@@ -6,7 +6,7 @@ FST_OUT_PURPLE=`tput setaf 5`
 FST_OUT_NC=`tput sgr0` # No Color
 FST_OUT_TAG="${FST_OUT_BLUE}F/R/A/M/E ${FST_OUT_NC}:::: "
 FST_OUT_NL=`tput il 1`
-FST_OUT_SEP="${FST_OUT_NC}----------------------------;"
+FST_OUT_SEP="${FST_OUT_NC}----------------------------";
 FST_OUT_BLOCK="+-------------------------------------------------------------+";
 
 function output {
