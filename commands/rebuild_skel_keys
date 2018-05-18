@@ -37,12 +37,50 @@ function setup_skel {
 
   output "exiting root"
 
-  exit 0;
+  return 0;
 
 }
 
+function setup_skel_dry {
+
+    if [[ "$(whoami)" != "root" ]]; then
+    echo "unable to become root user"
+    exit 1
+  fi
+
+  local key_folder="${F_OPTIONS[skelpath]}/.ssh"
+  local key_file="${key_folder}/authorized_keys"
+
+  echo "folder --- $key_folder"
+  echo "file --- $key_file"
+
+  output "Checking skel dirs exist"
+  mkdir -p "${key_folder}"
+  mkdir -p "${key_folder}/additional_keys"
+
+  output "Downloading new master key file"
+
+  output " MOCK: curl" "${F_OPTIONS[masterkeys]}" "${key_file}"
+
+  output "Setting skel key permissions"
+  output "chmod" "600" "${key_file}"
+  output "700" "${key_folder}"
+
+  output "exiting root"
+
+  return 0;
+
+
+}
+
+
+
 function FST_RUN_SELF {
 
-  output "RUNNING SKEL as $(whoami)"
-  #setup_skel;
+  if [[ "${FST_DRY}" == "false" ]]; then
+    setup_skel
+  else
+    setup_skel_dry
+  fi
+
 }

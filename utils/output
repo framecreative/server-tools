@@ -6,7 +6,7 @@ FST_OUT_PURPLE=`tput setaf 5`
 FST_OUT_NC=`tput sgr0` # No Color
 FST_OUT_TAG="${FST_OUT_BLUE}F/R/A/M/E ${FST_OUT_NC}:::: "
 FST_OUT_NL=`tput il 1`
-FST_OUT_SEP="${FST_OUT_NC}................................";
+FST_OUT_SEP="${FST_OUT_NC}----------------------------;"
 FST_OUT_BLOCK="+-------------------------------------------------------------+";
 
 function output {
@@ -23,7 +23,33 @@ function output {
 
 
 function output::block {
+      if [[ "${FST_OUTPUT_LEVEL}" == "0" ]]; then
+     ## Running on silent
+     return 0;
+  fi
+
        echo ""
        echo "${FST_OUT_BLOCK}"
        echo ""
+}
+
+function output::sep {
+  if [[ "${FST_OUTPUT_LEVEL}" == "0" ]]; then
+     ## Running on silent
+     return 0;
+  fi
+
+  echo "${FST_OUT_SEP}"
+}
+
+function output::mock {
+
+  if [[ "${FST_OUTPUT_LEVEL}" == "0" ]]; then
+     ## Running on silent
+     return 0;
+  fi
+
+  echo "${FST_OUT_YELLOW}$1${FST_OUT_NC}"
+  shift
+  for arg in "$@"; do echo "${arg}"; done;
 }

@@ -76,15 +76,19 @@ function rebuild_users_keys {
         return 0
     fi
 
+      echo "${FST_OUT_GREEN}${FST_OUT_BLOCK}"
+      output "REBUILD ALL USER KEYS"
+      echo "${FST_OUT_GREEN}${FST_OUT_BLOCK}"
+
     for U in ${users[@]}; do
 
-         output::block
+         output::sep
 
          output "Beginning key rebuild for user: ${U}"
 
          FST_run_as "${U}" "test_command"
 
-         output::block
+         output::sep
 
     done
 
@@ -92,16 +96,13 @@ function rebuild_users_keys {
 
 function rebuild_skel_keys {
 
-      output::block
+      echo "${FST_OUT_GREEN}${FST_OUT_BLOCK}"
+      output "REBUILD SKEL KEYS"
+      echo "${FST_OUT_GREEN}${FST_OUT_BLOCK}"
 
-      output "Beginning skel key rebuild"
+      FST_run_as "root" "rebuild_skel_keys"
 
-      if [[ "${FST_DRY}" == "true" ]]; then
-        FST_run_as "root" "test_command"
-      else
-        FST_run_as "root" "rebuild_skel_keys"
-      fi
-      output::block
+     
 
 }
 function cleanup {
@@ -120,7 +121,7 @@ function FST_RUN_SELF {
 
   do_setup;
 
-  #rebuild_skel_keys;
+  rebuild_skel_keys;
 
   rebuild_users_keys;
 
