@@ -86,7 +86,7 @@ function rebuild_users_keys {
 
          output "Beginning key rebuild for user: ${U}"
 
-         FST_run_as "${U}" "test_command"
+         FST_run_as "${U}" "rebuild_keys"
 
          output::sep
 

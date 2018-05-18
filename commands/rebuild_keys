@@ -144,6 +144,7 @@ function FST_RUN_SELF {
     download;
     build_key_file;
   else
+    FST_DEBUG="true"
     do_setup
     dump_args
   fi
