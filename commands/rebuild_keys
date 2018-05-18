@@ -15,7 +15,7 @@ F_OPTIONS["keypath"]="${HOME}/.ssh"
 F_OPTIONS["additionalkeypath"]="${F_OPTIONS[keypath]}/additional_keys"
 F_OPTIONS["backuppath"]="${F_OPTIONS[keypath]}/backups"
 F_OPTIONS["tmppath"]="${F_OPTIONS[keypath]}/tmp"
-F_OPTIONS["keyfile"]="${F_OPTIONS[keypath]}/test_authorized_keys"
+F_OPTIONS["keyfile"]="${F_OPTIONS[keypath]}/authorized_keys"
 F_OPTIONS["masterkeys"]="https://two.frame.hosting/_authkeys"
 
 
@@ -51,7 +51,11 @@ function do_setup {
 
   mkdir -p "${F_OPTIONS[tmppath]}"
 
-  for K in "${!F_OPTIONS[@]}"; do echo $K --- ${F_OPTIONS[$K]}; done
+  if [[ ${FST_DEBUG} == "true" ]]; then
+      for k in "${!F_OPTIONS[@]}"; do
+        echo "${FST_OUT_PURPLE}${k}${FST_OUT_NC} --- ${F_OPTIONS[$k]}"
+      done
+  fi
 
   output "setup complete..."
 }
@@ -130,10 +134,6 @@ function cleanup {
 
 function dump_args {
     output::mock "rebuild_keys" "$USER" "$HOME"
-
-    for k in "${!F_OPTIONS[@]}"; do
-      echo "${FST_OUT_PURPLE}${K}${FST_OUT_NC} --- ${F_OPTIONS[$k]}"
-    done
 }
 
 function FST_RUN_SELF {
@@ -144,7 +144,11 @@ function FST_RUN_SELF {
     download;
     build_key_file;
   else
+    ## Some settings for dry-run ie: test command
+
+    F_OPTIONS["keyfile"]="${F_OPTIONS[keypath]}/test_authorized_keys"
     FST_DEBUG="true"
+
     do_setup
     dump_args
   fi
