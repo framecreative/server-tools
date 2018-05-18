@@ -11,7 +11,7 @@ shopt -s nullglob globstar
 declare -A F_OPTIONS
 
 F_OPTIONS["user"]="$(whoami)"
-F_OPTIONS["keypath"]="${HOME}/.ssh"
+F_OPTIONS["keypath"]="${USER}/.ssh"
 F_OPTIONS["additionalkeypath"]="${F_OPTIONS[keypath]}/additional_keys"
 F_OPTIONS["backuppath"]="${F_OPTIONS[keypath]}/backups"
 F_OPTIONS["tmppath"]="${F_OPTIONS[keypath]}/tmp"
@@ -105,8 +105,8 @@ function add_extra_keys {
 
   output "Listing additional Keys...."
 
-  for file in $KEYS; do
-    output -en "Adding ${file}"
+  for file in "${KEYS[@]}"; do
+    output "Adding ${file}"
 
     echo -en "## ${file} \n" >> "${F_OPTIONS[keyfile]}";
     cat "${F_OPTIONS[additionalkeypath]}/${file}" >> "${F_OPTIONS[keyfile]}";

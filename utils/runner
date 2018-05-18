@@ -7,7 +7,12 @@ function FST_run_as {
 
   local the_user="$1"
 
-  for k in "${@}"; do echo "$k"; done;
+  output "Running ${FST_OUT_RED}$2${FST_OUT_NC} as ${FST_OUT_YELLOW}$1${FST_OUT_NC}"
+  if [[ "${FST_DEBUG}" == "true" ]]; then
+    for index in "${!@:2}"; do
+      echo "Arg ${index} --- ${@[$index]}"
+    done
+  fi
 
 sudo -u "${the_user}" bash -s "$@" <<-'EOF'
 
