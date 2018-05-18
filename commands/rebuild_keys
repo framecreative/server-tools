@@ -131,7 +131,7 @@ function cleanup {
 function dump_args {
     output::mock "rebuild_keys" "$USER" "$HOME"
 
-    for $k in "${!F_OPTIONS[@]}"; do
+    for k in "${!F_OPTIONS[@]}"; do
       echo "${FST_OUT_PURPLE}${K}${FST_OUT_NC} --- ${F_OPTIONS[$k]}"
     done
 }
