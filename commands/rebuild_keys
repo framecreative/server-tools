@@ -64,7 +64,11 @@ function backup {
 
   output "Backup up previous key file"
 
-  cp "${F_OPTIONS[keyfile]}" "${F_OPTIONS[backuppath]}/authorized_keys-${F_OPTIONS[exec_time]}"
+  if [[ "${FST_DRY}" == "false" ]]; then
+    cp "${F_OPTIONS[keyfile]}" "${F_OPTIONS[backuppath]}/authorized_keys-${F_OPTIONS[exec_time]}"
+  else 
+    output::mock "cp" "${F_OPTIONS[keyfile]}" "${F_OPTIONS[backuppath]}/authorized_keys-${F_OPTIONS[exec_time]}"
+  fi
 
   rm "${F_OPTIONS[keyfile]}"
 
