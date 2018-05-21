@@ -8,15 +8,23 @@ function FST_run_as {
   local the_user="$1"
 
   output "Running ${FST_OUT_RED}$2${FST_OUT_NC} as ${FST_OUT_YELLOW}$1${FST_OUT_NC}"
-  if [[ "${FST_DEBUG}" == "true" ]]; then
-    EXTRA=${@:2}
 
-    for index in "${!EXTRA[@]}"; do
-      echo "Arg ${index} --- ${EXTRA[index]}"
-    done
-  fi
 
-sudo -H -u "${the_user}" bash -s "$@" <<-'EOF'
+local inp=()
+
+for i in "${@}"; do 
+  inp=( "${inp[@]}" "$i" )
+done
+
+for i in "${FST_GLOBAL_FLAGS[@]}"; do 
+  inp=( "${inp[@]}" "$i" )
+done
+
+sudo -H -u "${the_user}" bash -s "${inp[@]}" <<-'EOF'
+
+for arg in "${@}"; do
+  echo $arg
+done;
 
 if [[ $(whoami) != "$1" ]]; then
   echo "could not switch to user"

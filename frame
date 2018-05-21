@@ -55,8 +55,6 @@ done;
 FST_parse_global_opts "$@"
 set -- $FST_PARSED_ARGS
 
-if [[ "${FST_DEBUG}" == "true" ]]; then echo "count $#"; echo "$@"; fi;
-
 ## Check the command exists
 
 FST_command_check "$1";

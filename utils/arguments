@@ -1,6 +1,7 @@
 # Parse the global args out
 function FST_parse_global_opts {
   local POSITIONAL=()
+  FST_GLOBAL_FLAGS=()
   while [[ $# -gt 0 ]]
   do
   key="$1"
@@ -13,18 +14,22 @@ function FST_parse_global_opts {
       ;;
       -q|--quiet)
       FST_OUTPUT_LEVEL="0"
+      FST_GLOBAL_FLAGS=( "${FST_GLOBAL_FLAGS[@]}" "--quiet")
       shift # past argument
       ;;
       -vvv|--verbose)
       FST_DEBUG="true"
+      FST_GLOBAL_FLAGS=( "${FST_GLOBAL_FLAGS[@]}" "--debug")
       shift # past argument
       ;;
       --no-log)
       FST_LOG_LEVEL="0"
+      FST_GLOBAL_FLAGS=( "${FST_GLOBAL_FLAGS[@]}" "--no-log")
       shift # past argument
       ;;
       --run)
       FST_DRY="false"
+      FST_GLOBAL_FLAGS=( "${FST_GLOBAL_FLAGS[@]}" "--run")
       shift # past argument
       ;;
       --debug)
@@ -33,6 +38,7 @@ function FST_parse_global_opts {
         exit 1
       fi
       FST_DEBUG="true"
+      FST_GLOBAL_FLAGS=( "${FST_GLOBAL_FLAGS[@]}" "--debug")
       shift # past argument
       ;;
       *)    # unknown option
@@ -47,6 +53,8 @@ function FST_parse_global_opts {
     echo "FST LOG LEVEL = ${FST_LOG_LEVEL}"
     echo "FST DEBUG = ${FST_DEBUG}"
     echo "FST DRY = ${FST_DRY}"
+
+    echo "FST_GLOBAL_FLAGS = ${FST_GLOBAL_FLAGS[@]}"
 
     set -- "${POSITIONAL[@]}"
 
