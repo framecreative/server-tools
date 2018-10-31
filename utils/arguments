@@ -41,6 +41,11 @@ function FST_parse_global_opts {
       FST_GLOBAL_FLAGS=( "${FST_GLOBAL_FLAGS[@]}" "--debug")
       shift # past argument
       ;;
+      --keep-old)
+      FST_GLOBAL_FLAGS=( "${FST_GLOBAL_FLAGS[@]}" "--keep-old")
+      FST_KEEP_OLD="true"
+      shift
+      ;;
       *)    # unknown option
       POSITIONAL+=("$1") # save it in an array for later
       shift # past argument
@@ -53,6 +58,7 @@ function FST_parse_global_opts {
     echo "FST LOG LEVEL = ${FST_LOG_LEVEL}"
     echo "FST DEBUG = ${FST_DEBUG}"
     echo "FST DRY = ${FST_DRY}"
+    echo "FST KEEP OLD = ${FST_KEEP_OLD}"
 
     echo "FST_GLOBAL_FLAGS = ${FST_GLOBAL_FLAGS[@]}"
 
