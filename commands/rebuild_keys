@@ -17,6 +17,7 @@ F_OPTIONS["backuppath"]="${F_OPTIONS[keypath]}/backups"
 F_OPTIONS["tmppath"]="${F_OPTIONS[keypath]}/tmp"
 F_OPTIONS["keyfile"]="${F_OPTIONS[keypath]}/authorized_keys"
 F_OPTIONS["masterkeys"]="https://two.frame.hosting/_authkeys"
+F_OPTIONS["keepcurrentkeys"]="false"
 
 
 function do_setup {
@@ -67,13 +68,13 @@ function backup {
   if [[ "${FST_DRY}" == "false" ]]; then
     cp "${F_OPTIONS[keyfile]}" "${F_OPTIONS[backuppath]}/authorized_keys-${F_OPTIONS[exec_time]}"
 
-    if [[ "$1" == "--keep-old" ]]; then
+    if [[ "${F_OPTIONS[keepcurrentkeys]}" == "true" ]]; then
       cp "${F_OPTIONS[keyfile]}" "${F_OPTIONS[additionalkeypath]}/pre-existing-keys-${F_OPTIONS[exec_time]}"
     fi
   else 
     output::mock "cp" "${F_OPTIONS[keyfile]}" "${F_OPTIONS[backuppath]}/authorized_keys-${F_OPTIONS[exec_time]}"
 
-    if [[ "$1" == "--keep-old" ]]; then
+    if [[ "${F_OPTIONS[keepcurrentkeys]}" == "true" ]]; then
       output::mock "cp" "${F_OPTIONS[keyfile]}" "${F_OPTIONS[additionalkeypath]}/pre-existing-keys-${F_OPTIONS[exec_time]}"
     fi
 
@@ -146,10 +147,14 @@ function cleanup {
 }
 
 function dump_args {
-    output::mock "rebuild_keys" "$USER" "$HOME"
+    output::mock "rebuild_keys" "$USER" "$HOME" "$@"
 }
 
 function FST_RUN_SELF {
+
+  if [[ $1 == "--keep-old" ]]; then
+    F_OPTIONS['keepcurrentkeys']="true"
+  fi
 
   if [[ "${FST_DRY}" == "false" ]]; then
     do_setup;
