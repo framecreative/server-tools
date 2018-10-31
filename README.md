@@ -94,3 +94,9 @@ Extra commands are welcome to be contributed by the team. If you're making bulk 
 See  `frame` for some global vars etc, you can trust variables like `${FST_BASEPATH}` to be correct.
 
 Ideally all commands should be idempotent or account for that sort of scenario.
+
+## TODO
+
+Short term: Server setup commands to be rolled in from seperate repo.
+
+Long term: Replace entirely,  no good reason why we shouldn't bebdoing this with some custom ansible roles / playbooks.

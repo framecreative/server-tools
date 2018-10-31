@@ -66,8 +66,17 @@ function backup {
 
   if [[ "${FST_DRY}" == "false" ]]; then
     cp "${F_OPTIONS[keyfile]}" "${F_OPTIONS[backuppath]}/authorized_keys-${F_OPTIONS[exec_time]}"
+
+    if [[ "$1" == "--keep-old" ]]; then
+      cp "${F_OPTIONS[keyfile]}" "${F_OPTIONS[additionalkeypath]}/pre-existing-keys-${F_OPTIONS[exec_time]}"
+    fi
   else 
     output::mock "cp" "${F_OPTIONS[keyfile]}" "${F_OPTIONS[backuppath]}/authorized_keys-${F_OPTIONS[exec_time]}"
+
+    if [[ "$1" == "--keep-old" ]]; then
+      output::mock "cp" "${F_OPTIONS[keyfile]}" "${F_OPTIONS[additionalkeypath]}/pre-existing-keys-${F_OPTIONS[exec_time]}"
+    fi
+
   fi
 
   rm "${F_OPTIONS[keyfile]}"
@@ -116,9 +125,9 @@ function add_extra_keys {
   for file in "${KEYS[@]}"; do
     output "Adding ${file}"
 
-    echo -en "## ${file} \n" >> "${F_OPTIONS[keyfile]}";
+    echo -en "\n ## ${file} \n" >> "${F_OPTIONS[keyfile]}";
     cat "${F_OPTIONS[additionalkeypath]}/${file}" >> "${F_OPTIONS[keyfile]}";
-    echo -en "##\n" >> "${F_OPTIONS[keyfile]}";
+    echo -en "\n ## END ${file} \n" >> "${F_OPTIONS[keyfile]}";
 
   done
 
