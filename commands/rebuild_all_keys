@@ -30,11 +30,6 @@ function do_setup {
     exit 1
   fi
 
-  if [[ "frame" != "${FST_ORIGINAL_USER}" && "dev" != "${FST_ORIGINAL_USER}" ]]; then
-      output "This script must be run as 'frame' user with sudo priviledges"
-      exit 1
-  fi
-
   if [[ !( -d "${F_OPTIONS[keypath]}") ]]; then
     output "${F_OPTIONS[keypath]} does not exist.."
     exit 1;
