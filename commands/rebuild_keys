@@ -113,9 +113,9 @@ function build_key_file {
 
 function add_extra_keys {
 
-  local KEYS="$(ls ${F_OPTIONS[additionalkeypath]} 2>/dev/null)";
+  local KEYS=($(ls ${F_OPTIONS[additionalkeypath]} 2>/dev/null));
 
-  if [[ ! $KEYS ]]; then
+  if [ ${#KEYS[@]} -eq 0  ]; then
     output "No Additional Keys are Present.."
     return 0;
   fi;
