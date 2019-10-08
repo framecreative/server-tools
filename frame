@@ -24,7 +24,7 @@ function FST_find_self {
 #
 #
 
-export FST_VERSION="1.3.3";
+export FST_VERSION="1.3.4";
 export FST_BASEPATH="$(FST_find_self)"
 export FST_UTILPATH="${FST_BASEPATH}/utils"
 export FST_COMMANDPATH="${FST_BASEPATH}/commands"
@@ -35,6 +35,7 @@ FST_DEBUG="false"
 FST_ORIGINAL_USER="$(whoami)"
 FST_CURRENT_COMMAND=""
 FST_DRY="true"
+FST_KEEP_OLD=false
 
 ## Provision to move config into server specific files 
 
